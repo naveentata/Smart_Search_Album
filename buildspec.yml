@@ -9,6 +9,6 @@ phases:
   post_build:
     commands:
       - echo "Updating lambda functions..."
-      - aws lambda update-function-code --function-name image_search.py
-      - aws lambda update-function-code --function-name image-index.py
+      - aws lambda update-function-code --function-name image_search
+      - aws lambda update-function-code --function-name image-index
       - echo "Done"
