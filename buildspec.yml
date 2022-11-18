@@ -6,11 +6,9 @@ phases:
   build:
     commands:
       - echo "Zipping depolyment package..."
-      - zip deployment_package1.zip image_search.py
-      - zip deployment_package2.zip image-index.py
   post_build:
     commands:
       - echo "Updating lambda functions..."
-      - aws lambda update-function-code --function-name image_search.py --zip-file fileb://deployment_package1.zip
-      - aws lambda update-function-code --function-name image-index.py --zip-file fileb://deployment_package2.zip
+      - aws lambda update-function-code --function-name image_search.py
+      - aws lambda update-function-code --function-name image-index.py
       - echo "Done"
