@@ -11,17 +11,27 @@ def lambda_handler(event, context):
     bucketName = jsonBody['s3']['bucket']['name']
     key = jsonBody['s3']['object']['key']
     reko = boto3.client('rekognition')
+    s3 = boto3.client('s3')
     try:
         data = {}
+        responses3 = s3.head_object(Bucket = bucketName, Key =key )
+        
         response = reko.detect_labels(
             Image={'S3Object': {'Bucket': bucketName, 'Name': key}})
         data['objectKey'] = key
         data['bucket'] = bucketName
         data['createdTimestamp'] = time.time()
         data['labels'] = []
+        print(responses3)
+        if not responses3['Metadata'] =={}:
+            customlabel = responses3['Metadata']['customlabels']
+            if customlabel != "":
+                data['labels'] = [i.strip() for i in customlabel.split(",")]
+        
         for label in response['Labels']:
             if label['Confidence'] > 95:
                 data['labels'].append(label['Name'])
+        print("***********",data['labels'])
         body = json.dumps(data)
         headers = {"Content-Type": "application/json"}
         r = requests.post(url=esUrl,auth = ('elasticnlp', 'Elastic@NLP1'), data=body, headers=headers)
